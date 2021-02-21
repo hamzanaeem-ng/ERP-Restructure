@@ -6,6 +6,8 @@ import { IconDrawerComponent } from './layout/icon-drawer/icon-drawer.component'
 import { Page404Component } from './layout/page404/page404.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -18,8 +20,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
   ],
   exports: [
     CommonModule,

@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService, 
   ){
     if (this._loginHelpers.isLoggedIn() && this._loginHelpers.getUserInfo()) {
-      router.navigate(['general/master']);
+      router.navigate(['department/motor']);
     }
   }
 
