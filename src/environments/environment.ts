@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  report_api_url: "http://54.36.109.50/Test_TakafulERP_Report/api/ReportExtensions/ReportPDF",
+  api_url: 'http://54.36.109.50/Test_TakafulERPBackend',
+  // api_url: 'https://iteck.pk/TakafulAPI',
+  // api_url: 'https://localhost:44352',
 };
 
 /*

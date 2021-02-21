@@ -1,0 +1,171 @@
+<!-- start: page -->
+<section class="body-sign">
+  <div class="center-sign">
+    <a routerLink="/" class="logo pull-left">
+      <img src="assets/images/logo.png" height="70" alt="Takaful Logo" />
+    </a>
+
+    <div class="panel panel-sign">
+      <div class="panel-title-sign mt-xl text-right">
+        <h2 class="title text-uppercase text-weight-bold m-none"><i class="fa fa-user mr-xs"></i> Sign In</h2>
+      </div>
+      <div class="panel-body">
+        <form [formGroup]="loginForm" novalidate (ngSubmit)="loginSubmit()">
+          <div class="form-group mb-lg">
+            <label>Username</label>
+            <div class="input-group input-group-icon">
+              <input formControlName="username" type="email" class="form-control input-lg" />
+              <span class="input-group-addon">
+                <span class="icon icon-lg">
+                  <i class="fa fa-user"></i>
+                </span>
+              </span>
+            </div>
+
+            <label
+              *ngIf="loginForm.controls['username'].invalid && ( isSubmitted || loginForm.controls['username'].dirty )"
+              id="fullname-error" class="error" for="fullname">
+              <span *ngIf="loginForm.controls['username'].errors.required">This field is required.</span>
+            </label>
+          </div>
+
+          <div class="form-group mb-lg">
+            <div class="clearfix">
+              <label class="pull-left">Password</label>
+            </div>
+            <div id="password" class="input-group input-group-icon">
+              <input formControlName="Password" [type]="showPass ? 'text' : 'password'" class="form-control input-lg" />
+              <i id="pass-icon" class="fa" [ngClass]="{ 'fa-eye-slash': !showPass, 'fa-eye': showPass}" (click)="showHidePass()"
+               style="cursor: pointer; color: #08c; font-size: 14px;"></i>
+              
+               <span class="input-group-addon">
+                <span class="icon icon-lg">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </span>
+            </div>
+
+            <label
+              *ngIf="loginForm.controls['Password'].invalid && ( isSubmitted ||loginForm.controls['Password'].dirty )"
+              id="fullname-error" class="error" for="fullname">
+              <span *ngIf="loginForm.controls['Password'].errors.required">This field is required.</span>
+            </label>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-8">
+              <a [routerLink]="[ '/auth/forgot-password' ]">Forgot Password?</a>
+            </div>
+            <div class="col-sm-4 text-right">
+              <button type="submit" class="btn btn-primary hidden-xs" [attr.id]="submitBtn">
+                <span class="btn-text">Sign In</span>
+                <span class="btn-loader"></span>
+              </button>
+              <button type="submit" class="btn btn-primary btn-block btn-lg visible-xs mt-lg" [attr.id]="submitBtn">
+                <span class="btn-text">Sign In</span>
+                <span class="btn-loader"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+        <img src="http://54.36.109.50/TakafulERPTest/assets/images/avl-logo.png" class="pwd-logo">
+      </div>
+    </div>
+
+    <p class="text-center text-muted mt-md mb-md">&copy; Copyright 2020 Takaful Pakistan. All rights reserved.</p>
+  </div>
+</section>
+<!-- end: page -->
+<div class="modal fade" id="userDept">
+  <div class="container" style="display: flex; justify-content: center; align-items: center; pointer-events: none;">
+    <div class="modal-dialog modal-sm" style="display: flex; justify-content: center;">
+      <div class="modal-content" style="pointer-events: all;">
+        <div class="modal-header">
+          <div class="row">
+            <div class="col-lg-6 col-md-6">
+              <h4 class="modal-title" id="myModalLabel">&nbsp;Select Department</h4>
+            </div>
+            <div class="col-lg-6 col-md-6 text-right">
+              <button type="button" class="close" data-dismiss="modal" style="font-size: 25px; color: #de0f0b;">&times;</button>
+              <div style="margin-right: 30px; float: right;">
+                <div *ngIf="userBranches.length > 1" class="form-group">
+                  <ng-select class="branch-selector" #branchSelector (change)="csDropdownChangeListener('branch', $event)" [clearable]="false" bindLabel="BranchName" bindValue="FkBranchId" placeholder="Branch" [items]="userBranches"></ng-select>
+                  <label *ngIf="!selectedBranch && departSelected" class="error">
+                      <span class="text-left">This field is required.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        <div class="modal-body">
+          <div class="modules">
+              <div class="row">
+                  <div class="col-sm-4 card-col">
+                      <div class="card-container card motor-module" [ngClass]="{'disable':!userDepartments.includes('Motor'), 'selected': selectedDepartment == departmentIds.Motor}" (click)="submitDept(departmentIds.Motor)">
+                          <div class="motor-icon"><i class="lni lni-car" [ngClass]="{'disable':!userDepartments.includes('Motor')}"></i></div>
+                          <div class="module-title">
+                              <h3 [ngClass]="{'disable':!userDepartments.includes('Motor')}">MOTOR</h3>
+                          </div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-sm-4 card-col">
+                      <div class="card-container card health-module" [ngClass]="{'disable':!userDepartments.includes('Health'), 'selected': selectedDepartment == departmentIds.Health}" (click)="submitDept(departmentIds.Health)">
+                          <div class="health-icon"><i class="lni lni-capsule" [ngClass]="{'disable':!userDepartments.includes('Health')}"></i></div>
+                          <div class="module-title"><h3 [ngClass]="{'disable':!userDepartments.includes('Health')}">HEALTH</h3></div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-sm-4 card-col" style="padding-right: 23px;">
+                      <div class="card-container card travel-module" [ngClass]="{'disable':!userDepartments.includes('Travel'), 'selected': selectedDepartment == departmentIds.Travel}" (click)="submitDept(departmentIds.Travel)">
+                          <div class="travel-icon"><i class="icons icon-plane" [ngClass]="{'disable':!userDepartments.includes('Travel')}"></i></div>
+                          <div class="module-title">
+                              <h3 [ngClass]="{'disable':!userDepartments.includes('Travel')}">TRAVEL</h3>
+                          </div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-4 card-col">
+                      <div class="card-container card agriculture-module" [ngClass]="{'disable':!userDepartments.includes('Agriculture'), 'selected': selectedDepartment == departmentIds.Agriculture}" (click)="submitDept(departmentIds.Agriculture)">
+                          <div class="agriculture-icon"><i class="lni lni-shovel" [ngClass]="{'disable':!userDepartments.includes('Agriculture')}"></i></div>
+                          <div class="module-title"><h3 [ngClass]="{'disable':!userDepartments.includes('Agriculture')}">AGRICULTURE</h3></div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-sm-4 card-col">
+                      <div class="card-container card engineering-module" [ngClass]="{'disable':!userDepartments.includes('Engineering'), 'selected': selectedDepartment == departmentIds.Engineering}" (click)="submitDept(departmentIds.Engineering)">
+                          <div class="engineering-icon"><i class="icons icon-graduation" [ngClass]="{'disable':!userDepartments.includes('Engineering')}"></i></div>
+                          <div class="module-title"><h3 [ngClass]="{'disable':!userDepartments.includes('Engineering')}">ENGINEERING</h3></div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-sm-4 card-col" style="padding-right: 23px;">
+                      <div class="card-container card fire-module" [ngClass]="{'disable':!userDepartments.includes('Fire'), 'selected': selectedDepartment == departmentIds.Fire}" (click)="submitDept(departmentIds.Fire)">
+                          <div class="fire-icon"><i class="icons icon-fire" [ngClass]="{'disable':!userDepartments.includes('Fire')}"></i></div>
+                          <div class="module-title"><h3 [ngClass]="{'disable':!userDepartments.includes('Fire')}">FIRE</h3></div>
+                          <div class="module-desc">
+                              <div class="desc">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs.</div> 
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
