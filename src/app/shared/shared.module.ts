@@ -20,9 +20,16 @@ import { HttpClient } from '@angular/common/http';
   ],
   imports: [
     CommonModule,
+    NgSelectModule,
+    ReactiveFormsModule,
+    FormsModule, 
   ],
   exports: [
     CommonModule,
+    NgSelectModule,
+    ReactiveFormsModule,
+    FormsModule,
+  
     HeaderComponent,
     SidebarComponent, 
     IconDrawerComponent,  

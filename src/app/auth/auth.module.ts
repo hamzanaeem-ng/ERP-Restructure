@@ -14,12 +14,7 @@ import { CommonModule } from '@angular/common';
     LoginComponent
   ],
   imports: [
-    CommonModule,
-    HttpClientModule,
     AuthRoutingModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgSelectModule,
     SharedModule,
   ]
 })
