@@ -4,9 +4,9 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
-import { HttpClientModule } from '@angular/common/http';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpAuthInterceptor, HttpErrorInterceptor } from './core/interceptors/http.interceptor';
+
 
 @NgModule({
   declarations: [
@@ -18,7 +18,18 @@ import { NgSelectModule } from '@ng-select/ng-select';
     AppRoutingModule,
     CoreModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpAuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

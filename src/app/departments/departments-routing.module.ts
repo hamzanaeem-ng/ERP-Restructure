@@ -9,8 +9,8 @@ const routes: Routes = [
   {
     path: '', component: MainPageComponent ,children: [
       // primary routes
-      { path: 'health', loadChildren: () => import(`./tpl-health/tpl-health.module`).then(m => m.TplHealthModule) },
-      { path: 'motor', loadChildren: () => import(`./tpl-motor/tpl-motor.module`).then(m => m.TplMotorModule) },
+      { path: 'Health', loadChildren: () => import(`./tpl-health/tpl-health.module`).then(m => m.TplHealthModule) },
+      { path: 'Motor', loadChildren: () => import(`./tpl-motor/tpl-motor.module`).then(m => m.TplMotorModule) },
       // secondary routes
      
     ]

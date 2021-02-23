@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { LoginHelpers } from 'src/app/shared/services/login.helper';
 import { AppHelpers } from 'src/app/shared/utilities/app.helper';
 import { AppStateService } from 'src/app/core/services/app-state.service';
 import { LoginService } from 'src/app/core/services/login.service';
+import { LoginAPI } from 'src/app/core/services/login.api';
 
 
 @Component({
@@ -23,7 +22,6 @@ export class LoginComponent implements OnInit {
   submitBtn = 'tkfLgBtn';
   modelsubmitBtn = 'tkfmdLGBtn';
   AppHelpers = AppHelpers;
-  private httpOptions; 
   showPass:boolean = false;
   selectedDepartment = null;
   selectedBranch = null;
@@ -37,19 +35,17 @@ export class LoginComponent implements OnInit {
   departmentIds = {'Motor': '', 'Health': '', 'Travel': '', 'Agriculture': '', 'Fire': '', 'Engineering': ''}
 
   constructor( private router: Router, 
-    public _appHelpers: AppHelpers,
-    public _loginHelpers: LoginHelpers,
     private appStateService: AppStateService,
-    private loginService: LoginService, 
+    private loginService: LoginService,
+    private loginAPI: LoginAPI 
   ){
-    if (this._loginHelpers.isLoggedIn() && this._loginHelpers.getUserInfo()) {
+    if (this.loginService.isLoggedIn() && this.loginService.getUserInfo()) {
       router.navigate(['department/motor']);
     }
   }
 
   ngOnInit(): void {
     this.initForm();
-    // this._appHelpers.showNotification('success', '', 'Hello How Are you?', 'fa fa-car');
   }
 
   initForm() {
@@ -69,8 +65,8 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       // let body = <LoginModel>this.loginForm.getRawValue();
       let body = <any>this.loginForm.getRawValue();
-      this._appHelpers.showLoader(this.submitBtn);
-      this.loginService.sendLoginRequest(body, false, false).subscribe(response => {
+      AppHelpers.showLoader(this.submitBtn);
+      this.loginAPI.sendLoginRequest(body, false, false).subscribe(response => {
 
         this.loginResponse = response;
 
@@ -98,44 +94,21 @@ export class LoginComponent implements OnInit {
 
         
         if (this.userDept.length > 1 || this.userBranches.length > 1) {
-          window['toggleModal']('#userDept', {backdrop: 'static', keyboard: false});
+          document.getElementById("userDeptBtn").click();
         } else {
           this.saveLoginState();
         }
 
-        this._appHelpers.hideLoader(this.submitBtn);
+        AppHelpers.hideLoader(this.submitBtn);
       }, (error) => {
+        const username = this.loginForm.controls.username.value;
         this.loginForm.controls.Password.reset();
-        this.checkLoginAttempts(error);
+        this.loginService.checkLoginAttempts(error, username);
       });
     }
   }
 
-  checkLoginAttempts(errorObj) {
-    const username = this.loginForm.controls.username.value;
-    if (errorObj?.error.message === "Incorrect password") {
-      let loginArrayString = this._loginHelpers.getCookie('tkfLoginAttempts');
-      loginArrayString = loginArrayString ? this._appHelpers.dcryptData(loginArrayString) : "[]";
-      let loginArray = JSON.parse(loginArrayString) as any[];
-      const unsuccessfulAttempts = loginArray.filter(x => x === username).length;
-
-      if (unsuccessfulAttempts >= 2) {
-        let body = {Username: username}
-        loginArray.push(username)
-        this.loginService.lockUser(body, false).subscribe(() => {
-          this._appHelpers.showNotification('error', "", "Your account has been deactivated due to unsuccessfull login attempts. Please contact your Administrator.", '');
-          this._loginHelpers.deleteCookie('tkfLoginAttempts');
-        });
-      } else {
-        loginArray.push(username);
-        
-      }
-      
-      this._loginHelpers.setCookie('tkfLoginAttempts', this._appHelpers.encryptData(JSON.stringify(loginArray)));
-    }
-    this._appHelpers.handleHttpError(errorObj);
-    this._appHelpers.hideLoader();
-  }
+ 
 
   submitDept(dept) {
     this.departSelected = true;
@@ -143,7 +116,7 @@ export class LoginComponent implements OnInit {
       this.selectedDepartment = dept;
       setTimeout(() => {
         this.saveLoginState();
-        window['toggleModal']('#userDept', 'hide');
+        document.getElementById("userDeptBtn").click();
       }, 1000);
     }
   }
@@ -163,22 +136,24 @@ export class LoginComponent implements OnInit {
 
   saveLoginState() {
 
-    this._loginHelpers.saveToken(this.loginResponse.authorizedToken);
+    this.loginService.saveToken(this.loginResponse.authorizedToken);
     delete this.loginResponse['authorizedToken'];
     let logonnResponse = this.loginResponse;
     logonnResponse['FkDepartmentId'] = this.selectedDepartment;
+    logonnResponse['DepartmentName'] = logonnResponse['userDepartments'].find(x => x.FkDepartmentId === this.selectedDepartment).DepartmentName;
     logonnResponse['FkBranchId'] = this.selectedBranch.FkBranchId;
     logonnResponse['BranchCode'] = this.selectedBranch.BranchCode;
     logonnResponse['ProvinceId'] = this.selectedBranch.FkProvinceId;
-    this._loginHelpers.saveUserInfo(logonnResponse);
-    this.appStateService.departChange.next(this.selectedDepartment);
+    this.loginService.saveUserInfo(logonnResponse);
+    this.loginService.departChange = this.selectedDepartment;
     // this._appHelpers.showNotification("success", "", "Successfully Logged In!");
     this.appStateService.getDropdownList();
-    window['fadeLoaderIn']();
+    // window['fadeLoaderIn']();
+    
     if (this.appStateService.permissions) {
-      this._appHelpers.showNotification("success", "", "Successfully Logged In!");
+      AppHelpers.showNotification("success", "", "Successfully Logged In!");
     }
-    this.router.navigate(['general/master']);
+    this.router.navigate(['department']);
 
   }
 }

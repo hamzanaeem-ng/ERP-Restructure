@@ -6,22 +6,6 @@ import { Injectable } from '@angular/core';
 export class AppConfig{
     public privateCryptoKey = "0987654321.."
     
-    private _loginToken = null;
-    get loginToken(){
-        return this._loginToken;
-    }
-    set loginToken(value){
-        this._loginToken = value;
-    }
-    
-    private _isLoggedIn = false;
-    get isLoggedIn(){
-        return this._isLoggedIn;
-    }
-    set isLoggedIn(value){
-        this._isLoggedIn = value;
-    }
-
     private _DataConfig = {
         "ProductSetup": {
           "TableName": [

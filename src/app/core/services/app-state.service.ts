@@ -7,15 +7,15 @@ import { EMPTY } from 'rxjs';
 
 import { AppHelpers } from '../../shared/utilities/app.helper';
 import { AppConfig } from '../../shared/utilities/app.config';
-import { LoginHelpers } from '../../shared/services/login.helper';
-import { UserService } from './user.service';
+import { UserService } from './user.api';
+import { LoginService } from './login.service';
 
 @Injectable({
     providedIn:'root'
 })
 export class AppStateService{
     
-    private httpOptions = this._loginHelpers.getToken() ? new HttpHeaders().set("Authorization", "Bearer " + this._loginHelpers.getToken().toString()) : null;
+   
     private readonly _dropDowns = new BehaviorSubject<any>([]);
     readonly dropDowns$ = this._dropDowns.asObservable();
     get dropDowns(): any {
@@ -39,38 +39,34 @@ export class AppStateService{
        this._departChange.next(val);
     }
 
-    constructor(private http: HttpClient, private _loginHelpers: LoginHelpers, private _appHelpers: AppHelpers, private _appConfig: AppConfig, private user: UserService){
+    constructor(private http: HttpClient, private _appConfig: AppConfig, private loginService: LoginService, private user: UserService){
     }
 
     getPermissions(){
-        const userRoleType = this._loginHelpers.getUserInfo().userRole;
+        const userRoleType = this.loginService.getUserInfo().userRole;
         const params = { role: userRoleType }
-        this.user.getUserRolePermisions(params, this.httpOptions).subscribe((response: any) => {
+        this.user.getUserRolePermisions(params).subscribe((response: any) => {
             this.permissions = [...response];
         })
     }
 
     getDropdownList(SpcTableList = null) {
         const TableList = SpcTableList || this._appConfig.DataConfig.ProductSetup;
-        const headers = this.httpOptions;
         
-        this.http.post(`${environment.api_url}/Users/GetAlldropDownsData`,TableList,{ headers })
+        
+        this.http.post(`${environment.api_url}/Users/GetAlldropDownsData`,TableList )
         .pipe(catchError(this.formatErrors)).subscribe((response: Array<any>) => {
           
-          if(!SpcTableList) this.dropDowns = [...response];
-          else response.forEach((element)=>{
-            const dropDown = this.dropDowns.find(dropDown => dropDown.TableName === element.TableName);
-            const index = this.dropDowns.indexOf(dropDown);
-            this.dropDowns[index] = {
-              ...element
-            }
+            response.forEach(element => {
+                this.dropDowns[element.TableName] = element.TableItems;
+            });  
             this.dropDowns = [...this.dropDowns];
-          })
-        });
+        }); 
+          
     }
 
     formatErrors(errorObj: any) {
-      this._appHelpers.handleHttpError(errorObj);
+      AppHelpers.handleHttpError(errorObj);
       return  EMPTY;
     }
 }

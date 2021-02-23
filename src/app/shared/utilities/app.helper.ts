@@ -1,17 +1,12 @@
-import { Injectable } from '@angular/core';
 import { AppConfig } from './app.config';
-import * as CryptoJS from 'crypto-js';
+
 import { EMPTY } from 'rxjs';
 
-
-@Injectable({
-    providedIn:'root'
-})
 export class AppHelpers{
   
-  constructor(private _appConfig: AppConfig) { }
+  constructor() { }
 
-  generateRandomNumber(length = 20) {
+  public static generateRandomNumber(length = 20) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -21,11 +16,11 @@ export class AppHelpers{
     return result;
   }
 
-  showLoader(elementId) {
+  public static showLoader(elementId) {
       document.getElementById(elementId).classList.add('is--loading');
   }
 
-  hideLoader(elementId = null) {
+  public static hideLoader(elementId = null) {
       if (elementId) {
         document.getElementById(elementId) ? document.getElementById(elementId).classList.remove('is--loading') : null;
       } else {
@@ -35,16 +30,8 @@ export class AppHelpers{
       }
   }
 
-  encryptData(data): string {
-    return CryptoJS.AES.encrypt(data, this._appConfig.privateCryptoKey).toString();
-  }
 
-  dcryptData(data): string{
-      const bytes = CryptoJS.AES.decrypt(data, this._appConfig.privateCryptoKey);
-      return bytes.toString(CryptoJS.enc.Utf8);
-  }
-
-  handleHttpError(errorObj) {
+  public static handleHttpError(errorObj) {
     
     let ErrorObj = {};
     let ErrorList = [];
@@ -95,7 +82,7 @@ export class AppHelpers{
     return  EMPTY;
   }
     
-  showNotification(type = 'success', title = '', message: string, icon = '', extraClass = '') {
+  public static showNotification(type = 'success', title = '', message: string, icon = '', extraClass = '') {
       const config = {
         type,
         title: !(title !== '') ? false : title,
@@ -132,7 +119,7 @@ export class AppHelpers{
       }
   }
 
-  createNotificationTemplate(config) {
+  public static createNotificationTemplate(config) {
       const notify = document.querySelector('.notification-placer');
       const randomId = `tkfn-${this.generateRandomNumber(10)}`;
       const template = `
@@ -164,12 +151,21 @@ export class AppHelpers{
       }, config.delay);
   }
 
-  removeNotificationTemplate(parentId) {
+  public static removeNotificationTemplate(parentId) {
       const newElem = document.querySelector(`#${parentId}`)
       newElem ? newElem.classList.add('tkfn-hide') : null;
       setTimeout(() => {
         newElem?.remove();
       }, 800);
+  }
+
+  public static getValueFromArray(columnName, searchIndex, objectArray) {
+    return (objectArray as Array<any>).filter(x => x[columnName] === searchIndex);
+  }
+
+  public static getNormalizedValueFromArray(columnNameToCheck, searchIndex, objectArray,columnNameToReturn) {
+    const arr = (objectArray as Array<any>).filter(x => x[columnNameToCheck] === searchIndex);
+    return arr.length > 0 ? arr[0][columnNameToReturn] : searchIndex;
   }
 }
 

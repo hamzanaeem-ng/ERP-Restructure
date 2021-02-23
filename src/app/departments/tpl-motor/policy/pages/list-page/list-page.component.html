@@ -1,1 +1,353 @@
-<p>motor's policy-list works!</p>
+
+  <section role="main" class="content-body">
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <header class="page-header">
+          <h2>{{ isClaimSearch === false ? "Policy List" : "Claim Search"}}</h2>
+        </header>
+
+        <section class="panel">
+          <div class="panel-body">
+
+            <div class="dataTables_wrapper">
+
+              <div class="filters-panel">
+                <div class="flexy-grid">
+                  <div class="flexxy-column col-sm-3">
+                    <label for="records" class="filter-column-style">
+                      <span>Search Criteria:</span>
+                      <div class="input-element">
+                        <ng-select
+                          id="records"
+                          [items]="searchCriteria"
+                          bindLabel="Label"
+                          placeholder=""
+                          bindValue="Value"
+                          (change)="criteria = $event"
+                          [ngModel]="searchCriteria[0].Value"
+                          [clearable]="false"
+                          [searchable]="false"
+                          >
+                        </ng-select>
+                      </div>
+                    </label>
+                  </div>
+                  <div class="flexxy-column col-sm-3">
+                    <label for="searchbox" class="filter-column-style">
+                      <span>Search For:</span>
+                      <div class="input-element">
+                        <input type="text" class="form-control pull-right" (keyup)="onKeyup($event)" placeholder="Search..." id="searchbox" [ngModelOptions]="{standalone: true}" [ngModel]="null" (ngModelChange)="search($event)" />
+                        <span (click)="filterSearchCriteria()" class="floating--icon trailing-icon"><i class="icons icon-magnifier"></i></span>
+                      </div>
+                    </label>
+                  </div>
+                  <div class="flexxy-column col-sm-3">
+                    <label for="records" class="filter-column-style">
+                      <span>Records Per Page:</span>
+                      <div class="input-element">
+                        <ng-select
+                          id="records"
+                          [items]="pageSizes"
+                          bindLabel="value"
+                          placeholder=""
+                          bindValue="value"
+                          (change)="onPageSizeChange($event)"
+                          [ngModel]="pageSizes[1].value"
+                          [clearable]="false"
+                          [searchable]="false"
+                          >
+                        </ng-select>
+                      </div>
+                    </label>
+                  </div>
+                  <div class="flexxy-column col-sm-3">
+                    <label for="records" class="filter-column-style">
+                      <span>Status:</span>
+                      <div class="input-element">
+                        <ng-select
+                          id="records"
+                          [items]="totalParsedStatuses"
+                          bindLabel="Label"
+                          placeholder="Select Status"
+                          bindValue="Value"
+                          [ngModel]="totalParsedStatuses[0] && totalParsedStatuses[0].Value"
+                          (ngModelChange)="filterStatus = $event; updateFilter()"
+                          [clearable]="false"
+                          [searchable]="false"
+                          >
+                        </ng-select>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <ngx-datatable 
+                class="material ngx-datatable-style-1" 
+                #dtTable
+                [rows]="rows" 
+                [headerHeight]="50"
+                [footerHeight]="50" 
+                [rowHeight]="50"
+                [columnMode]="'force'"
+                [limit]="currentPageSize"
+                (sort)="onSort($event)"
+                [loadingIndicator]="loadingIndicator$ | async"
+                [sorts]="[{prop: 'PolicyCode', dir: 'asc'}]">
+
+                  <ngx-datatable-row-detail #myDetailRow >
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                      <div class="dtTable-detail">
+                        <div class="detail-box">
+                          <label for="">Insurance Company</label>
+                          <span>{{ row.PolicyHeader.PreInsuranceCompany ? row.PolicyHeader.PreInsuranceCompany : "N/A" }}</span>
+                        </div>
+
+                        <div class="detail-box">
+                          <label for="">Terms & Conditions</label>
+                          <span>{{ row.PolicyHeader.PreInsuranceTermsConditions ? row.PolicyHeader.PreInsuranceTermsConditions : "N/A" }}</span>
+                        </div>
+                        
+                        <div class="detail-box" *ngIf="row.PolicyHeader.FkPolicyCategoryId == 2 && row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() != 'posted'">
+                          <div class="alert alert-warning">
+                            You cannot generate claim for <strong>{{row.PolicyHeader.PolicyStatus}} Policy</strong>.
+                          </div>
+                        </div>
+
+                        <div class="detail-list">
+                          <label for="">Motor Details</label>
+                          <table class="table mb-none tbd-style-1">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Participant Name</th>
+                                <th>Contact Number</th>
+                                <th>Vehicle</th>
+                                <th>Vehicle Number</th>
+                                <th>Chassis</th>
+                                <th>Engine</th>
+                                <th>Sum Insured</th>
+                                <th>Is Deleted</th>
+                                <th>Report</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of row.MotorDetails;let i = index">
+                                <td>{{i+1}}</td>
+                                <td>{{ item.ParticipantName }}</td>
+                                <td>{{ item.ContactNumber }}</td>
+                                <td>{{ AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, AppConfig.DataInitials.VehicleMakes)[0] ? AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, AppConfig.DataInitials.VehicleMakes)[0].Make : ''}} 
+                                  {{AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, AppConfig.DataInitials.VehicleSubMakes)[0] ? AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, AppConfig.DataInitials.VehicleSubMakes)[0].SubMake : ''}} 
+                                  {{AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, AppConfig.DataInitials.VehicleModels)[0] ? AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, AppConfig.DataInitials.VehicleModels)[0].Model : ''}}
+                                </td>
+                                <td>{{item.VehicleRegistrationNumber}}</td>
+                                <td>{{item.Chasis}}</td>
+                                <td>{{item.Engine}}</td>
+                                <td>
+                                  <span class="tt-symbol">PKR</span> <span class="tt-price">{{ item.SumInsured | currency:' ':'code'}}</span>
+                                </td>
+                                <td>
+                                  <div class="tkf-pill" [ngClass]="{'status--no': item.IsDeleted,'status--yes': !item.IsDeleted}">
+                                    {{item.IsDeleted ? 'Yes' : 'No'}}
+                                  </div>
+                                </td>
+                                <td>
+                                  <button type="button" class="btn btn-primary dropdown-toggle js-dropdown-toggler">
+                                    <i class="fa fa-chevron-down" [tooltip]="'Reports'"></i>
+                                    <div class="dropdown-menu js-dropdown-menu" role="menu">
+
+                                      <a class="dropdown-item text-1"
+                                      (click)="generateReport('underwriting_Motor Cover Letter', {PolicyHeaderId: null, MotorDetailId: item.PkReferenceId, VersionNo: item.Version})"
+                                      ><i class="fa fa-file-text-o"></i> Cover Letter</a>
+
+                                      <a class="dropdown-item text-1"
+                                      (click)="generateReport('Underwriting_Motor Certificate', {ReferenceId: item.PkReferenceId, Version: item.Version})"
+                                      ><i class="fa fa-file-text-o"></i> Motor Certificate</a>
+
+                                    </div>
+                                  </button>
+                                </td>
+                                <td style="min-width: 140px;">
+                                  <div class="tool-tip-box" [tooltip]="item.IsDeleted ? 'Motor is deleted' : 'Actions'">
+                                  <button [disabled]="item.IsDeleted" type="button" class="btn btn-primary dropdown-toggle js-dropdown-toggler"
+                                  *ngIf="!(row.PolicyHeader.FkPolicyCategoryId == 2 && row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() != 'posted') && claimpermission?.Insert == true">
+                                    <i class="fa fa-chevron-down"></i>
+                                    <div class="dropdown-menu js-dropdown-menu" role="menu">
+
+                                      <a class="dropdown-item text-1"
+                                      *ngIf="!(row.PolicyHeader.FkPolicyCategoryId == 2 && row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() != 'posted')" 
+                                      (click)="generateURL('claim', {FkPolicyId: row.PolicyHeader.FkPolicyId, FkMotorId: item.PkReferenceId, PolicyCode: row.PolicyHeader.PolicyCode})"
+                                      ><i class="fa fa-file-text-o"></i> Create Claim</a>
+                                    </div>
+                                  </button>
+                                </div>
+                                </td>
+                              </tr>
+                              <tr class="tbdr-nodata" *ngIf="row.MotorDetails && row.MotorDetails.length === 0">
+                                <td colspan="12">
+                                  No Data</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="detail-list">
+                          <label for="">Endorsement Details</label>
+                          <table class="table mb-none tbd-style-1">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Endorsement Code</th>
+                                <th>Endorsement Type</th>
+                                <th>Issue Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of row.Endorsements;let i = index">
+                                <td>{{i+1}}</td>
+                                <td>{{ item.PolicyCode }}</td>
+                                <td>{{ item.EndorsementType }}</td>
+                                <td>{{ AppHelpers.formatDate(item.IssueDate, 'DD MMMM YYYY') }}</td>
+                                <td>{{ item.PolicyStatus }}</td>
+                                <td>
+                                  <button type="button" *ngIf="item.PolicyStatus == 'New'" class="mb-1 mt-1 mr-1 btn btn-primary dropdown-toggle js-dropdown-toggler">
+                                    <i class="fa fa-chevron-down" [tooltip]="'Actions'"></i>
+                                    <div class="dropdown-menu js-dropdown-menu" role="menu">
+                                
+                                      <a class="dropdown-item text-1" *ngIf="item.PolicyStatus.toLowerCase() === 'new'"
+                                        (click)="postEndorsement(item)"><i class="fa fa-paper-plane"></i> Post Endorsement</a>
+                                
+                                        <!-- <a class="dropdown-item text-1"
+                                        (click)="generateURLEndorsement('view-endorsement', {FkPolicyId: item.PolicyCode, FkEndorsementTypeId: item.LeaderEndorsmentNumber})"
+                                        ><i class="fa fa-file-text-o"></i> View Endorsement</a> -->
+                                    </div>
+                                  </button>
+                                </td>
+                              </tr>
+                              <tr class="tbdr-nodata" *ngIf="row.Endorsements && row.Endorsements.length === 0">
+                                <td colspan="12">
+                                  No Data</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ngx-datatable-row-detail>
+                  <!-- Column Templates -->
+                  <ngx-datatable-column maxWidth="50" [sortable]="false">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                      <a
+                        class="fa text-primary dt-expander"
+                        href="javascript:void(0)"
+                        [class.fa-plus-square-o]="!expanded"
+                        [class.fa-minus-square-o]="expanded"
+                        [tooltip]="'Expand/Collapse Row'"
+                        (click)="toggleExpandRow(row)"
+                      >
+                      </a>
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column maxWidth="225" prop="PolicyHeader.PolicyCode" name="Policy Code"></ngx-datatable-column>
+                  <ngx-datatable-column [sortable]="false" name="Client">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                      {{ AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, AppConfig.DataInitials.Clients)[0] ? AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, AppConfig.DataInitials.Clients)[0].Name : '' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column [sortable]="false" prop="PolicyHeader.FkDocumentTypeId" name="Document Type">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                      {{ AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, AppConfig.DataInitials.DocumentType)[0] ? AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, AppConfig.DataInitials.DocumentType)[0].Name : '' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column prop="PolicyHeader.FkProductId" name="Product" [sortable]="false">
+                    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                      {{ AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, AppConfig.DataInitials.Products)[0] ? AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, AppConfig.DataInitials.Products)[0].ProductName : '' }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column prop="PolicyHeader.NoOfDays" name="No Of Days" [sortable]="false"></ngx-datatable-column>
+                  <ngx-datatable-column name="Status" [sortable]="true">
+                    <ng-template let-rowIndex="rowIndex" let-value="value" let-row="row" ngx-datatable-cell-template>
+                      <div [class]="'tkf-pill status--'+row.PolicyHeader.PolicyStatus.toLowerCase()">
+                        {{row.PolicyHeader.PolicyStatus}}
+                      </div>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column maxWidth="70" name="Reports" [sortable]="false" cellClass="tkf-cs-right">
+                    <ng-template let-rowIndex="rowIndex" let-value="value" let-row="row" ngx-datatable-cell-template>
+
+                      <!-- <button type="button" class="mb-1 mt-1 mr-1 btn btn-default dropdown-toggle js-dropdown-toggler"
+                      *ngIf="(permission?.Update == false && permission?.View == false && permission?.Post == false) ? false : true">
+                        <i class="fa fa-chevron-down" [tooltip]="'Reports'"></i>
+												<div class="dropdown-menu js-dropdown-menu" role="menu">
+                          <a class="dropdown-item text-1"
+                          (click)="generateReport('underwriting_Policy Schedule', {PolicyHeaderId: row.PolicyHeader.FkPolicyId})"
+                          ><i class="fa fa-file-text-o"></i> Policy Schedule</a>
+                          <a class="dropdown-item text-1"
+                          (click)="generateReport('underwriting_Motor Cover Letter', {PolicyHeaderId: row.PolicyHeader.FkPolicyId, MotorDetailId: null, VersionNo: null})"
+                          ><i class="fa fa-file-text-o"></i> Cover Letter</a>
+                          <a class="dropdown-item text-1"
+                          (click)="generateReport('underwriting_Vehicle Schedule', {PolicyHeaderId: row.PolicyHeader.FkPolicyId})"
+                          ><i class="fa fa-file-text-o"></i> Vehicle Schedule</a>
+                        </div>
+                      </button> -->
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column maxWidth="70" *ngIf="isClaimSearch === false" cellClass="tkf-cs-right" name="Actions" [sortable]="false">
+                    <ng-template let-rowIndex="rowIndex" let-value="value" let-row="row" ngx-datatable-cell-template>
+
+                      <!-- <button type="button" class="mb-1 mt-1 mr-1 btn btn-default dropdown-toggle js-dropdown-toggler"
+                      *ngIf="(permission?.Update == false && permission?.View == false && permission?.Post == false) ? false : true">
+                        <i class="fa fa-chevron-down" [tooltip]="'Actions'"></i>
+												<div class="dropdown-menu js-dropdown-menu" role="menu">
+                          <a class="dropdown-item text-1"
+                          *ngIf="row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() === 'new' && row.PolicyHeader.FkPolicyCategoryId === 2 && permission?.Update == true" 
+                          (click)="generateURL('edit', {FkPolicyId: row.PolicyHeader.PkPolicyHeaderId, PolicyCode: row.PolicyHeader.PolicyCode})"
+                          ><i class="fa fa-pencil"></i> Edit Policy</a>
+                          
+                          <a class="dropdown-item text-1"
+                          (click)="generateURL('view', {FkPolicyId: row.PolicyHeader.FkPolicyId, PolicyCode: row.PolicyHeader.PolicyCode})"
+                          *ngIf= "permission?.View == true"
+                          ><i class="fa fa-eye"></i> View Policy</a>
+
+                          <a class="dropdown-item text-1"
+                          (click)="openRemarks(row)"
+                          ><i class="fa fa-comments"></i> Remarks</a>
+                          
+                          <a class="dropdown-item text-1"
+                          *ngIf="row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() === 'new' && row.PolicyHeader.FkPolicyCategoryId === 2 && permission?.Post == true"
+                          (click)="postPolicy(row)"
+                          ><i class="fa fa-paper-plane"></i> Post Policy</a>
+                          
+                          <a class="dropdown-item text-1"
+                          *ngIf="(row.PolicyHeader.PolicyStatus.toLowerCase() === 'posted' && checkEndorsementStatus(row))" 
+                          (click)="generateURLEndorsement('endorsement', {FkPolicyId: row.PolicyHeader.PolicyCode})"
+                          ><i class="fa fa-file-text-o"></i> Create Endorsement</a>
+
+												</div>
+                      </button> -->
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                </ngx-datatable>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- <div (click)="AppHelpers.toggleSidebar($event, null)" class="bkdrop-right-sidebar js-bkp-right-sidebar"></div> -->
+
+    <!-- end: page -->
+  </section>
+
+<remarks-sidebar [type]="type"  [RemarksList]="covernoteRemarks" [SelectedPolicy]="selectedPolicy" (RemarkAdded)="onRemarkAdded($event)"></remarks-sidebar>

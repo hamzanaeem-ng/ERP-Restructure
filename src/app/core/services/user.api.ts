@@ -11,14 +11,14 @@ export class UserService {
   ) { }
 
   getUsers(requestBody = {}, tokenHeader) {
-    return this.api.post('/Users/GetUsers', requestBody, tokenHeader, true, false);
+    return this.api.post('/Users/GetUsers', requestBody, tokenHeader);
   }
 
   addUser(requestBody, tokenHeader) {
     return this.api.post('/Users/AddUser', requestBody, tokenHeader);
   }
-  getUserRolePermisions(params, tokenHeader) {
-    return this.api.get('/Users/GetPrivilegeByRole', params, tokenHeader, true, false)
+  getUserRolePermisions(params) {
+    return this.api.get('/Users/GetPrivilegeByRole', params)
   }
 
   updateUser(requestBody, tokenHeader) {
