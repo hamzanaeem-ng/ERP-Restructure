@@ -20,8 +20,10 @@
     "@angular/platform-browser-dynamic": "~9.0.3",
     "@angular/router": "~9.0.3",
     "@ng-select/ng-select": "^4.0.4",
-    "@swimlane/ngx-datatable": "^19.0.0",
+    "@swimlane/ngx-datatable": "^16.0.3",
     "crypto-js": "^4.0.0",
+    "moment": "^2.29.1",
+    "ng2-tooltip-directive": "^2.9.22",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

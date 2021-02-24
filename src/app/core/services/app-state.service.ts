@@ -9,6 +9,7 @@ import { AppHelpers } from '../../shared/utilities/app.helper';
 import { AppConfig } from '../../shared/utilities/app.config';
 import { UserService } from './user.api';
 import { LoginService } from './login.service';
+import { DataInitials } from '../models/app.model';
 
 @Injectable({
     providedIn:'root'
@@ -16,13 +17,13 @@ import { LoginService } from './login.service';
 export class AppStateService{
     
    
-    private readonly _dropDowns = new BehaviorSubject<any>([]);
-    readonly dropDowns$ = this._dropDowns.asObservable();
-    get dropDowns(): any {
-        return this._dropDowns.getValue();
+    private readonly _DataInitials = new BehaviorSubject<DataInitials>(null);
+    readonly DataInitials$ = this._DataInitials.asObservable();
+    get DataInitials(): DataInitials {
+        return this._DataInitials.getValue();
     }
-    set dropDowns(val: any) {
-        this._dropDowns.next(val);
+    set DataInitials(val: DataInitials) {
+        this._DataInitials.next(val);
     }
 
     private readonly _permissions = new BehaviorSubject<any>([]);
@@ -52,17 +53,14 @@ export class AppStateService{
 
     getDropdownList(SpcTableList = null) {
         const TableList = SpcTableList || this._appConfig.DataConfig.ProductSetup;
-        
-        
-        this.http.post(`${environment.api_url}/Users/GetAlldropDownsData`,TableList )
-        .pipe(catchError(this.formatErrors)).subscribe((response: Array<any>) => {
-          
-            response.forEach(element => {
-                this.dropDowns[element.TableName] = element.TableItems;
-            });  
-            this.dropDowns = [...this.dropDowns];
-        }); 
-          
+
+        this.http.post(`${environment.api_url}/Users/GetAlldropDownsData`, TableList)
+            .pipe(catchError(this.formatErrors)).subscribe((response: Array<any>) => {
+                response.forEach((element) => {
+                    this.DataInitials[element.TableName] = element.TableItems;
+                })
+                this.DataInitials = {...this.DataInitials };            
+            });
     }
 
     formatErrors(errorObj: any) {

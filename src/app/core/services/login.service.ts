@@ -43,7 +43,9 @@ export class LoginService{
     }
 
     getUserInfo() {
-      return this.getCookie('tkfUserInfo' + this.currentEnvironment) ? JSON.parse(this.getCookie('tkfUserInfo' + this.currentEnvironment)) : null;    
+      const userInfo = this.getCookie('tkfUserInfo' + this.currentEnvironment) ? JSON.parse(this.getCookie('tkfUserInfo' + this.currentEnvironment)) : null;    
+      this.user.next(userInfo);
+      return this.user.getValue();
     }
 
     saveUserInfo(userInfo) {
@@ -87,6 +89,18 @@ export class LoginService{
     dcryptData(data): string{
         const bytes = CryptoJS.AES.decrypt(data, this._appConfig.privateCryptoKey);
         return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
+    generateURLHash(value: string | {[key: string]: string}): string{
+      const randomKey = AppHelpers.generateRandomNumber(5);
+      let urlObj = this.getCookie('tfkUrlhash');
+      urlObj = urlObj ? this.dcryptData(urlObj) : "{}";
+      urlObj = JSON.parse(urlObj) || {};
+      urlObj[randomKey] = value;
+  
+      this.setCookie('tfkUrlhash', this.encryptData(JSON.stringify(urlObj)));
+  
+      return randomKey;
     }
 
     checkLoginAttempts(errorObj, username) {

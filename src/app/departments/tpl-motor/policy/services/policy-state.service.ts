@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from 'rxjs';
-import { AppConfig } from 'src/app/shared/utilities/app.config';
+import { AppStateService } from 'src/app/core/services/app-state.service';
 import { AppHelpers } from 'src/app/shared/utilities/app.helper';
 import { RemarkDetail } from '../models/policy.model';
 import { PolicyAPIService } from './policy.api';
 
-@Injectable()
+@Injectable({
+    providedIn:'root'
+})
 export class PoliciesStateService{
     
     private readonly _policies = new BehaviorSubject<any>([]);
@@ -32,7 +34,7 @@ export class PoliciesStateService{
         this._loader.next(val);
     }
 
-    constructor( private APIService: PolicyAPIService){
+    constructor( private APIService: PolicyAPIService, private appStateService: AppStateService ){
 
     }
 
@@ -62,7 +64,7 @@ export class PoliciesStateService{
         response.forEach((policy, index) => {
             policy.id = index;
             policy.Endorsements.map(endorsement => {
-                endorsement.EndorsementType = AppConfig.DataInitials.EndorsementType.find(x => x.PkReferenceId == endorsement.LeaderEndorsmentNumber)?.Description;
+                endorsement.EndorsementType = this.appStateService.DataInitials.EndorsementType.find(x => x['PkReferenceId'] == endorsement.LeaderEndorsmentNumber)?.Description
             });
         });
         

@@ -89,4 +89,5 @@ export class AppConfig{
     get DataConfig(){
         return this._DataConfig;
     }
+
 }

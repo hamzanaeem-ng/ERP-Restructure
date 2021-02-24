@@ -140,9 +140,9 @@
                                 <td>{{i+1}}</td>
                                 <td>{{ item.ParticipantName }}</td>
                                 <td>{{ item.ContactNumber }}</td>
-                                <td>{{ AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, AppConfig.DataInitials.VehicleMakes)[0] ? AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, AppConfig.DataInitials.VehicleMakes)[0].Make : ''}} 
-                                  {{AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, AppConfig.DataInitials.VehicleSubMakes)[0] ? AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, AppConfig.DataInitials.VehicleSubMakes)[0].SubMake : ''}} 
-                                  {{AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, AppConfig.DataInitials.VehicleModels)[0] ? AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, AppConfig.DataInitials.VehicleModels)[0].Model : ''}}
+                                <td>{{ AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, DataInitials.VehicleMakes)[0] ? AppHelpers.getValueFromArray('PkMakeId', item.FkVehicleMake, DataInitials.VehicleMakes)[0].Make : ''}} 
+                                  {{AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, DataInitials.VehicleSubMakes)[0] ? AppHelpers.getValueFromArray('PkSubMakeId', item.FkVehicleSubMake, DataInitials.VehicleSubMakes)[0].SubMake : ''}} 
+                                  {{AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, DataInitials.VehicleModels)[0] ? AppHelpers.getValueFromArray('PkModelId', item.FkVehicleModel, DataInitials.VehicleModels)[0].Model : ''}}
                                 </td>
                                 <td>{{item.VehicleRegistrationNumber}}</td>
                                 <td>{{item.Chasis}}</td>
@@ -173,7 +173,7 @@
                                 </td>
                                 <td style="min-width: 140px;">
                                   <div class="tool-tip-box" [tooltip]="item.IsDeleted ? 'Motor is deleted' : 'Actions'">
-                                  <button [disabled]="item.IsDeleted" type="button" class="btn btn-primary dropdown-toggle js-dropdown-toggler"
+                                  <!-- <button [disabled]="item.IsDeleted" type="button" class="btn btn-primary dropdown-toggle js-dropdown-toggler"
                                   *ngIf="!(row.PolicyHeader.FkPolicyCategoryId == 2 && row.PolicyHeader.PolicyStatus && row.PolicyHeader.PolicyStatus.toLowerCase() != 'posted') && claimpermission?.Insert == true">
                                     <i class="fa fa-chevron-down"></i>
                                     <div class="dropdown-menu js-dropdown-menu" role="menu">
@@ -183,7 +183,7 @@
                                       (click)="generateURL('claim', {FkPolicyId: row.PolicyHeader.FkPolicyId, FkMotorId: item.PkReferenceId, PolicyCode: row.PolicyHeader.PolicyCode})"
                                       ><i class="fa fa-file-text-o"></i> Create Claim</a>
                                     </div>
-                                  </button>
+                                  </button> -->
                                 </div>
                                 </td>
                               </tr>
@@ -258,17 +258,17 @@
                   <ngx-datatable-column maxWidth="225" prop="PolicyHeader.PolicyCode" name="Policy Code"></ngx-datatable-column>
                   <ngx-datatable-column [sortable]="false" name="Client">
                     <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                      {{ AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, AppConfig.DataInitials.Clients)[0] ? AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, AppConfig.DataInitials.Clients)[0].Name : '' }}
+                      {{ AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, DataInitials.Clients)[0] ? AppHelpers.getValueFromArray('PkClientId', row.PolicyHeader.FkClientId, DataInitials.Clients)[0].Name : '' }}
                     </ng-template>
                   </ngx-datatable-column>
                   <ngx-datatable-column [sortable]="false" prop="PolicyHeader.FkDocumentTypeId" name="Document Type">
                     <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                      {{ AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, AppConfig.DataInitials.DocumentType)[0] ? AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, AppConfig.DataInitials.DocumentType)[0].Name : '' }}
+                      {{ AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, DataInitials.DocumentType)[0] ? AppHelpers.getValueFromArray('PkReferenceId', row.PolicyHeader.FkDocumentTypeId, DataInitials.DocumentType)[0].Name : '' }}
                     </ng-template>
                   </ngx-datatable-column>
                   <ngx-datatable-column prop="PolicyHeader.FkProductId" name="Product" [sortable]="false">
                     <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                      {{ AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, AppConfig.DataInitials.Products)[0] ? AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, AppConfig.DataInitials.Products)[0].ProductName : '' }}
+                      {{ AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, DataInitials.Products)[0] ? AppHelpers.getValueFromArray('PkProductId', row.PolicyHeader.FkProductId, DataInitials.Products)[0].ProductName : '' }}
                     </ng-template>
                   </ngx-datatable-column>
                   <ngx-datatable-column prop="PolicyHeader.NoOfDays" name="No Of Days" [sortable]="false"></ngx-datatable-column>
@@ -350,4 +350,4 @@
     <!-- end: page -->
   </section>
 
-<remarks-sidebar [type]="type"  [RemarksList]="covernoteRemarks" [SelectedPolicy]="selectedPolicy" (RemarkAdded)="onRemarkAdded($event)"></remarks-sidebar>
+<!-- <remarks-sidebar [type]="type"  [RemarksList]="covernoteRemarks" [SelectedPolicy]="selectedPolicy" (RemarkAdded)="onRemarkAdded($event)"></remarks-sidebar> -->

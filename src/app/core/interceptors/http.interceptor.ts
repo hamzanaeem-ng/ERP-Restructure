@@ -37,36 +37,36 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
 export const SkipErrorHeader = 'Skip-Error-Header';
 
-@Injectable({
-    providedIn: 'root'
-})
-export class HttpErrorInterceptor implements HttpInterceptor {
+// @Injectable({
+//     providedIn: 'root'
+// })
+// export class HttpErrorInterceptor implements HttpInterceptor {
 
-    constructor(private loginService: LoginService) { }
+//     constructor(private loginService: LoginService) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+//     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-        if (req.headers.has(SkipErrorHeader)) {
-            const headers = req.headers.delete(SkipErrorHeader);
-            return next.handle(req.clone({ headers }))
-        }
+//         if (req.headers.has(SkipErrorHeader)) {
+//             const headers = req.headers.delete(SkipErrorHeader);
+//             return next.handle(req.clone({ headers }))
+//         }
 
-        return next.handle(req)
-            .pipe(
-                catchError((error: HttpErrorResponse) => {
-                    //   let errorMessage = '';
-                    //   if (error.error instanceof ErrorEvent) {
-                    //     // client-side error
-                    //     errorMessage = `Error: ${error.error.message}`;
-                    //   } else {
-                    //     // server-side error
-                    //     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-                    //   }
-                    //   window.alert(errorMessage);
-                    //   return throwError(errorMessage);
-                    return throwError('some error');
-                }))
+//         return next.handle(req)
+//             .pipe(
+//                 catchError((error: HttpErrorResponse) => {
+//                     //   let errorMessage = '';
+//                     //   if (error.error instanceof ErrorEvent) {
+//                     //     // client-side error
+//                     //     errorMessage = `Error: ${error.error.message}`;
+//                     //   } else {
+//                     //     // server-side error
+//                     //     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+//                     //   }
+//                     //   window.alert(errorMessage);
+//                     //   return throwError(errorMessage);
+//                     return throwError('some error');
+//                 }))
 
-    }
+//     }
 
-}
+// }

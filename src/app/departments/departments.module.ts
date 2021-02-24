@@ -10,8 +10,8 @@ import { MainPageComponent } from './main-page/main-page.component';
     MainPageComponent
   ],
   imports: [
-    SharedModule,
-    DepartmentsRoutingModule
+    DepartmentsRoutingModule,
+    SharedModule
   ]
 })
 export class DepartmentsModule { }

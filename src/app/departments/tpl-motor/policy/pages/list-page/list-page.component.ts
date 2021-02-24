@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AppStateService } from 'src/app/core/services/app-state.service';
+import { LoginService } from 'src/app/core/services/login.service';
+import { ReportsService } from 'src/app/shared/services/reports.service';
 import { AppConfig } from 'src/app/shared/utilities/app.config';
 import { AppHelpers } from 'src/app/shared/utilities/app.helper';
 import { PoliciesStateService } from '../../services/policy-state.service';
@@ -16,6 +18,7 @@ export class ListPageComponent implements OnInit {
  
   AppHelpers = AppHelpers;
   AppConfig = AppConfig;
+  DataInitials;
   ConsoleLog = console.log;
   rows = [];
   totalData = [];
@@ -58,7 +61,14 @@ export class ListPageComponent implements OnInit {
   loadingIndicator$: Observable<boolean>;
   private subscription: Subscription = new Subscription();
   
-  constructor(private appStateService: AppStateService, private moduleStateService: PoliciesStateService, private reportService: ReportsService, private _activatedRoute: ActivatedRoute, private _helper: AppHelpers, private _router: Router) {
+  constructor(
+    private appStateService: AppStateService, 
+    private moduleStateService: PoliciesStateService,
+    private loginService: LoginService,
+    private reportService: ReportsService,
+    private _activatedRoute: ActivatedRoute,
+    private _router: Router
+    ) {
 
     if (this._activatedRoute.routeConfig.path === 'search') {
       this.isClaimSearch = true;
@@ -70,8 +80,11 @@ export class ListPageComponent implements OnInit {
   ngOnInit(): void {
 
     this.subscription.add(
-      this.appStateService.dropDowns$.subscribe((response)=>{
-        if(response.length > 0) this.moduleStateService.getPolicies();
+      this.appStateService.DataInitials$.subscribe((response)=>{
+        if( response && Object.keys(response).length !== 0) {
+          this.moduleStateService.getPolicies();
+          this.DataInitials = response;
+        }
       })
     );
 
@@ -108,13 +121,13 @@ export class ListPageComponent implements OnInit {
 
     this.loadingIndicator$ = this.moduleStateService.loader$;
     
-    setTimeout(() => {
-      if (this.isClaimSearch) {
-        document.getElementById('nav-claims').classList.add('nav-expanded', 'nav-active');
-      } else {
-        document.getElementById('nav-policy').classList.add('nav-expanded', 'nav-active');
-      }
-    }, 200);
+    // setTimeout(() => {
+    //   if (this.isClaimSearch) {
+    //     document.getElementById('nav-claims').classList.add('nav-expanded', 'nav-active');
+    //   } else {
+    //     document.getElementById('nav-policy').classList.add('nav-expanded', 'nav-active');
+    //   }
+    // }, 200);
 
     this.ngxDatatableResize();
   }
@@ -179,7 +192,7 @@ export class ListPageComponent implements OnInit {
   openRemarks(row) {
     this.covernoteRemarks = row.PolicyRemarks;
     this.selectedPolicy = row;
-    AppHelpers.toggleSidebar(null, 'RemarksBar');
+    // AppHelpers.toggleSidebar(null, 'RemarksBar');
   }
 
   onRemarkAdded(body) {
@@ -266,7 +279,7 @@ export class ListPageComponent implements OnInit {
         PolicyCode,
       };
      console.log(urlObj.FkMotorId);
-     const randomKey = AppHelpers.generateURLHash(urlObj);
+     const randomKey = this.loginService.generateURLHash(urlObj);
 
     switch (scope) {
       
@@ -294,7 +307,7 @@ export class ListPageComponent implements OnInit {
       FkPolicyId,
       FkEndorsementTypeId
     };
-   const randomKey = AppHelpers.generateURLHash(urlObj);
+   const randomKey = this.loginService.generateURLHash(urlObj);
 
   switch (scope) {
    
@@ -318,7 +331,7 @@ export class ListPageComponent implements OnInit {
       Parameters: params,
       ReportType: "ERP"
     }
-    this.reportService.generateThisReport(requestBody, this.httpOptions);
+    this.reportService.generateThisReport(requestBody);
   }
 
   ngOnDestroy(){

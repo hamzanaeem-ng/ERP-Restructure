@@ -147,7 +147,6 @@ export class LoginComponent implements OnInit {
     this.loginService.saveUserInfo(logonnResponse);
     this.loginService.departChange = this.selectedDepartment;
     // this._appHelpers.showNotification("success", "", "Successfully Logged In!");
-    this.appStateService.getDropdownList();
     // window['fadeLoaderIn']();
     
     if (this.appStateService.permissions) {

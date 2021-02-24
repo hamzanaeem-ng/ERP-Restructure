@@ -7,9 +7,8 @@ import { Page404Component } from './layout/page404/page404.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { HttpClient } from '@angular/common/http';
-
-
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 @NgModule({
   declarations: [
@@ -20,13 +19,17 @@ import { HttpClient } from '@angular/common/http';
   ],
   imports: [
     CommonModule,
+    TooltipModule,
     NgSelectModule,
+    NgxDatatableModule,
     ReactiveFormsModule,
     FormsModule, 
   ],
   exports: [
     CommonModule,
+    TooltipModule,
     NgSelectModule,
+    NgxDatatableModule,
     ReactiveFormsModule,
     FormsModule,
   

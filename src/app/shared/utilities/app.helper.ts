@@ -1,5 +1,6 @@
-import { AppConfig } from './app.config';
 
+
+import * as moment from 'moment';
 import { EMPTY } from 'rxjs';
 
 export class AppHelpers{
@@ -16,6 +17,18 @@ export class AppHelpers{
     return result;
   }
 
+   /**
+   * @description
+   * Formats the given date in the given format
+   *
+   * @params
+   * date: Date
+   * format: Desired format for date
+   */ 
+  public static formatDate(date, format: string): any{
+    return moment(new Date(date).getTime()).format(format);
+  }
+
   public static showLoader(elementId) {
       document.getElementById(elementId).classList.add('is--loading');
   }
@@ -29,7 +42,6 @@ export class AppHelpers{
         });
       }
   }
-
 
   public static handleHttpError(errorObj) {
     
@@ -63,16 +75,16 @@ export class AppHelpers{
       Icon = "fa fa-warning";  
     }
 
-    if (errorObj.statusText === "Unauthorized") {
-      if (!document.querySelector('#nonAuthorizedModal.is--opening')) {
-        document.querySelector('#nonAuthorizedModal').classList.add('is--opening');
-        document.getElementById('nonAuthorizedModalToggler').click();
-        document.getElementById('nonAuthorizedModal').style.display = 'block';
-      }
-      setTimeout(() => {
-        document.querySelector('#nonAuthorizedModal').classList.remove('is--opening');
-      }, 1000);
-    }
+    // if (errorObj.statusText === "Unauthorized") {
+    //   if (!document.querySelector('#nonAuthorizedModal.is--opening')) {
+    //     document.querySelector('#nonAuthorizedModal').classList.add('is--opening');
+    //     document.getElementById('nonAuthorizedModalToggler').click();
+    //     document.getElementById('nonAuthorizedModal').style.display = 'block';
+    //   }
+    //   setTimeout(() => {
+    //     document.querySelector('#nonAuthorizedModal').classList.remove('is--opening');
+    //   }, 1000);
+    // }
 
     // Show Toast
     if (errorObj.statusText !== "Unauthorized") {
@@ -167,5 +179,6 @@ export class AppHelpers{
     const arr = (objectArray as Array<any>).filter(x => x[columnNameToCheck] === searchIndex);
     return arr.length > 0 ? arr[0][columnNameToReturn] : searchIndex;
   }
+
 }
 
