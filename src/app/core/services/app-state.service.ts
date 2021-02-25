@@ -2,10 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
-
-import { AppHelpers } from '../../shared/utilities/app.helper';
 import { AppConfig } from '../../shared/utilities/app.config';
 import { UserService } from './user.api';
 import { LoginService } from './login.service';
@@ -16,8 +12,7 @@ import { DataInitials } from '../models/app.model';
 })
 export class AppStateService{
     
-   
-    private readonly _DataInitials = new BehaviorSubject<DataInitials>(null);
+    private readonly _DataInitials = new BehaviorSubject<DataInitials>({} as DataInitials);
     readonly DataInitials$ = this._DataInitials.asObservable();
     get DataInitials(): DataInitials {
         return this._DataInitials.getValue();
@@ -55,7 +50,7 @@ export class AppStateService{
         const TableList = SpcTableList || this._appConfig.DataConfig.ProductSetup;
 
         this.http.post(`${environment.api_url}/Users/GetAlldropDownsData`, TableList)
-            .pipe(catchError(this.formatErrors)).subscribe((response: Array<any>) => {
+            .subscribe((response: Array<any>) => {
                 response.forEach((element) => {
                     this.DataInitials[element.TableName] = element.TableItems;
                 })
@@ -63,8 +58,4 @@ export class AppStateService{
             });
     }
 
-    formatErrors(errorObj: any) {
-      AppHelpers.handleHttpError(errorObj);
-      return  EMPTY;
-    }
 }

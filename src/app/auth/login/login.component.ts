@@ -66,19 +66,16 @@ export class LoginComponent implements OnInit {
       // let body = <LoginModel>this.loginForm.getRawValue();
       let body = <any>this.loginForm.getRawValue();
       AppHelpers.showLoader(this.submitBtn);
-      this.loginAPI.sendLoginRequest(body, false, false).subscribe(response => {
+      this.loginAPI.sendLoginRequest(body).subscribe(response => {
 
         this.loginResponse = response;
 
         this.userDept = response.userDepartments;
         this.userBranches = response.userBranches;
 
-        // Default Selecting the first Department & Branch
-        // this.selectedDepartment = this.userDept[0].FkDepartmentId;
-        
         this.userDept.forEach(dept=>{
           this.userDepartments.push(dept.DepartmentName)
-          this.departmentIds[dept.DepartmentName] = dept.FkDepartmentId
+          this.departmentIds[dept.DepartmentName] = dept.FkDepartmentId;
           if(dept.FkDepartmentId == this.userDept['FkDepartmentId']){
             this.selectedDepartment = dept.DepartmentName
           }

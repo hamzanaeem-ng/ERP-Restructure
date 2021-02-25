@@ -1,72 +1,90 @@
 import {
-    HttpEvent,
-    HttpInterceptor,
-    HttpHandler,
-    HttpRequest,
-    HttpErrorResponse,
-    HttpParams
+	HttpEvent,
+	HttpInterceptor,
+	HttpHandler,
+	HttpRequest,
+	HttpErrorResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, exhaustMap, take } from 'rxjs/operators';
+import { AppHelpers } from 'src/app/shared/utilities/app.helper';
 import { LoginService } from '../services/login.service';
 
 @Injectable({
-    providedIn: 'root'
+	providedIn: 'root'
 })
-export class HttpAuthInterceptor implements HttpInterceptor {
+export class AvoidRequestInterceptor implements HttpInterceptor {
 
-    constructor(private loginService: LoginService) { }
+	constructor(private loginService: LoginService) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return this.loginService.user.pipe(
-            take(1),
-            exhaustMap(user => {
-                if (!user) {
-                    return next.handle(req)
-                }
-                const modifiedReq = req.clone({
-                    params: new HttpParams().set("Authorization", "Bearer " + this.loginService.getToken().toString())
-                });
-                return next.handle(modifiedReq);
-            })
-        );
-    }
+	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		return this.loginService.user.pipe(
+			take(1),
+			exhaustMap(user => {
+				if (!user) {
+					return next.handle(req)
+				}
+				const modifiedReq = req.clone({
+					headers: req.headers.set('Authorization', `Bearer ${this.loginService.getToken().toString()}`),
+				});
+				return next.handle(modifiedReq);
+			})
+		);
+	}
 
 }
 
-export const SkipErrorHeader = 'Skip-Error-Header';
+@Injectable({
+	providedIn: 'root'
+})
+export class AuthInterceptor implements HttpInterceptor {
 
-// @Injectable({
-//     providedIn: 'root'
-// })
-// export class HttpErrorInterceptor implements HttpInterceptor {
+	constructor(private loginService: LoginService) { }
 
-//     constructor(private loginService: LoginService) { }
+	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		return this.loginService.user.pipe(
+			take(1),
+			exhaustMap(user => {
+				if (!user) {
+					return next.handle(req)
+				}
+				const modifiedReq = req.clone({
+					headers: req.headers.set('Authorization', `Bearer ${this.loginService.getToken().toString()}`),
+				});
+				return next.handle(modifiedReq);
+			})
+		);
+	}
 
-//     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+}
 
-//         if (req.headers.has(SkipErrorHeader)) {
-//             const headers = req.headers.delete(SkipErrorHeader);
-//             return next.handle(req.clone({ headers }))
-//         }
+export const XSkipErrorHandling = 'X-Skip-Error-Handling';
 
-//         return next.handle(req)
-//             .pipe(
-//                 catchError((error: HttpErrorResponse) => {
-//                     //   let errorMessage = '';
-//                     //   if (error.error instanceof ErrorEvent) {
-//                     //     // client-side error
-//                     //     errorMessage = `Error: ${error.error.message}`;
-//                     //   } else {
-//                     //     // server-side error
-//                     //     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-//                     //   }
-//                     //   window.alert(errorMessage);
-//                     //   return throwError(errorMessage);
-//                     return throwError('some error');
-//                 }))
+@Injectable({
+	providedIn: 'root'
+})
+export class ErrorHandlingInterceptor implements HttpInterceptor {
 
-//     }
+	constructor() { }
 
-// }
+	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+		if (req.headers.has(XSkipErrorHandling)) {
+			console.log('Handle Error in Component')
+			return next.handle(req);
+		}
+		else{
+			console.log('Handle Error in Request')
+			const headers = req.headers.delete(XSkipErrorHandling);
+			return next.handle(req.clone({ headers }))
+				.pipe(
+					catchError((error: HttpErrorResponse) => {
+						return AppHelpers.handleHttpError(error);
+					}));
+		}
+
+
+	}
+
+}

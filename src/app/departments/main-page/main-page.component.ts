@@ -23,7 +23,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.appStateService.getDropdownList();
     const deptName = this.loginService.getUserInfo()?.DepartmentName;
     this._router.navigate([deptName] , {relativeTo: this._activatedRoute} );
-  
   }
 
   ngOnDestroy(): void{

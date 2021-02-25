@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpAuthInterceptor } from './core/interceptors/http.interceptor';
+import { AuthInterceptor, ErrorHandlingInterceptor } from './core/interceptors/http.interceptor';
 
 
 @NgModule({
@@ -21,14 +21,14 @@ import { HttpAuthInterceptor } from './core/interceptors/http.interceptor';
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: HttpAuthInterceptor,
+      useClass: AuthInterceptor,
       multi: true,
     },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: HttpErrorInterceptor,
-    //   multi: true,
-    // }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingInterceptor,
+      multi: true,
+    }
   ],
   bootstrap: [AppComponent]
 })

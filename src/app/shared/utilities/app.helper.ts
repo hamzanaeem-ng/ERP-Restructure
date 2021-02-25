@@ -1,5 +1,6 @@
 
 
+import { HttpHeaders } from '@angular/common/http';
 import * as moment from 'moment';
 import { EMPTY } from 'rxjs';
 
@@ -178,6 +179,17 @@ export class AppHelpers{
   public static getNormalizedValueFromArray(columnNameToCheck, searchIndex, objectArray,columnNameToReturn) {
     const arr = (objectArray as Array<any>).filter(x => x[columnNameToCheck] === searchIndex);
     return arr.length > 0 ? arr[0][columnNameToReturn] : searchIndex;
+  }
+
+  public static addHeaders( skipErrorHandling = false, skipLoginCheck = false){
+    let headers = new HttpHeaders();
+    if(skipErrorHandling){
+      headers.set( 'X-Skip-Error-Handling', 'Skip Error Handling')
+    }
+    if(skipLoginCheck){
+      headers.append( 'X-Skip-Login-Check', 'Skip Login Check')
+    }
+    return {headers}
   }
 
 }

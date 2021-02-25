@@ -114,7 +114,7 @@ export class LoginService{
         if (unsuccessfulAttempts >= 2) {
           let body = {Username: username}
           loginArray.push(username)
-          this.loginAPI.lockUser(body, false).subscribe(() => {
+          this.loginAPI.lockUser(body).subscribe(() => {
             AppHelpers.showNotification('error', "", "Your account has been deactivated due to unsuccessfull login attempts. Please contact your Administrator.", '');
             this.deleteCookie('tkfLoginAttempts');
           });

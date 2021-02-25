@@ -1,5 +1,6 @@
-
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AppHelpers } from 'src/app/shared/utilities/app.helper';
 import { ApiService } from './api.service';
 
 
@@ -7,28 +8,30 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class LoginAPI {
+
   apiResponse = null;
+  
   constructor( 
     private api: ApiService
-  ) {}
-
-  sendLoginRequest(requestBody, checkLogin, handleInternalError = true) {
-    return this.api.post('/Users/UserLogin', requestBody, {});
+    ) {}
+    
+  sendLoginRequest(requestBody) {
+   return this.api.post('/Users/UserLogin', requestBody, AppHelpers.addHeaders(true))
   }
   
-  logout(requestBody, tokenHeader, checkLogin) {
-    return this.api.post('/Users/UserLogout', requestBody, tokenHeader);
+  logout(requestBody) {
+    return this.api.post('/Users/UserLogout', requestBody);
   }
   
-  lockUser(requestBody, checkLogin) {
+  lockUser(requestBody) {
     return this.api.post('/Users/LockUser', requestBody, {});
   }
 
-  sendForgetPasswordRequest(requestBody, checkLogin) {
+  sendForgetPasswordRequest(requestBody) {
     return this.api.post('/Users/ForgetPassword', requestBody, {});
   }
 
-  verifyForgetToken(params, checkLogin): Promise<SentDateTime> {
+  verifyForgetToken(params): Promise<SentDateTime> {
     return new Promise<SentDateTime>((resolve, reject) => {
       this.api.get('/Users/GetEmailDetailsFromToken', params, {}).subscribe((response) => {
         response.Valid = true;
@@ -45,7 +48,7 @@ export class LoginAPI {
     });  
   }
 
-  resetPassword(requestBody, checkLogin) {
+  resetPassword(requestBody,) {
     return this.api.post('/Users/ResetPassword', requestBody, {});
   }
 
