@@ -189,7 +189,7 @@ export class AppHelpers{
     if(skipLoginCheck){
       headers.append( 'X-Skip-Login-Check', 'Skip Login Check')
     }
-    return {headers}
+    return headers
   }
 
 }

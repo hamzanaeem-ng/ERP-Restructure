@@ -16,7 +16,7 @@ export class LoginAPI {
     ) {}
     
   sendLoginRequest(requestBody) {
-   return this.api.post('/Users/UserLogin', requestBody, AppHelpers.addHeaders(true))
+   return this.api.post('/Users/UserLogin', requestBody, true)
   }
   
   logout(requestBody) {

@@ -1,11 +1,10 @@
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, EMPTY} from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AppHelpers } from 'src/app/shared/utilities/app.helper';
-import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { LoginService } from './login.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -102,19 +101,41 @@ export class ApiService {
   // }
 
 
-  get(path: string, params: HttpParams = new HttpParams(), headers = {}): Observable<any> {
-    return this.http.get(`${environment.api_url}${path}`, { params, headers }); 
+  get(path: string, params: HttpParams = new HttpParams(), skipErrorHandling = false): Observable<any> {
+    const headers = new HttpHeaders({
+      'X-Skip-Error-Handling': ''
+    })
+    if(skipErrorHandling){
+
+    }
+    return this.http.get(`${environment.api_url}${path}`, { params, headers });   
   }
 
-  put(path: string, body: Object = {}, headers = {}): Observable<any> {
+  put(path: string, body: Object = {}, skipErrorHandling = false): Observable<any> {
+    const headers = new HttpHeaders({
+      'X-Skip-Error-Handling': ''
+    })
+    if(skipErrorHandling){
+
+    } 
     return this.http.put(`${environment.api_url}${path}`, body, { headers });
   }
 
-  post(path: string, body: Object = {}, headers = {}): Observable<any> {
+  post(path: string, body: Object = {}, skipErrorHandling = false): Observable<any> {
+    const headers = new HttpHeaders().set('X-Skip-Error-Handling', 'Skip Error Handling');  
+    if(skipErrorHandling){
+      headers.set('X-Skip-Check-Login', 'Skip Check Login');  
+    }
     return this.http.post(`${environment.api_url}${path}`, body, { headers });
   }
 
-  delete(path, headers = {}): Observable<any> {
+  delete(path, skipErrorHandling = false): Observable<any> {
+    const headers = new HttpHeaders({
+      'X-Skip-Error-Handling': ''
+    })
+    if(skipErrorHandling){
+
+    } 
     return this.http.delete(`${environment.api_url}${path}`, { headers });
   }
 
