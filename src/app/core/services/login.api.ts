@@ -16,7 +16,7 @@ export class LoginAPI {
     ) {}
     
   sendLoginRequest(requestBody) {
-   return this.api.post('/Users/UserLogin', requestBody, true)
+   return this.api.post('/Users/UserLogin', requestBody, true, true)
   }
   
   logout(requestBody) {
@@ -24,16 +24,16 @@ export class LoginAPI {
   }
   
   lockUser(requestBody) {
-    return this.api.post('/Users/LockUser', requestBody, {});
+    return this.api.post('/Users/LockUser', requestBody);
   }
 
   sendForgetPasswordRequest(requestBody) {
-    return this.api.post('/Users/ForgetPassword', requestBody, {});
+    return this.api.post('/Users/ForgetPassword', requestBody);
   }
 
   verifyForgetToken(params): Promise<SentDateTime> {
     return new Promise<SentDateTime>((resolve, reject) => {
-      this.api.get('/Users/GetEmailDetailsFromToken', params, {}).subscribe((response) => {
+      this.api.get('/Users/GetEmailDetailsFromToken', params).subscribe((response) => {
         response.Valid = true;
         this.apiResponse = response;
         resolve(response);
@@ -49,7 +49,7 @@ export class LoginAPI {
   }
 
   resetPassword(requestBody,) {
-    return this.api.post('/Users/ResetPassword', requestBody, {});
+    return this.api.post('/Users/ResetPassword', requestBody);
   }
 
   changePassword(requestBody, tokenHeader) {

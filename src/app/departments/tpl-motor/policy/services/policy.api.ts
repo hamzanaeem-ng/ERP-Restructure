@@ -1,4 +1,5 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/core/services/api.service';
 
@@ -12,7 +13,7 @@ export class PolicyAPIService{
     }
 
     getPolicies() {
-        return this.api.get('/Policy/GetAllPoliciesWithEndorsements'); 
+        return this.api.get('/Policy/GetAllPoliciesWithEndorsements', null , true); 
     }
 
     getPolicyFiltered(requestBody) {

@@ -181,16 +181,5 @@ export class AppHelpers{
     return arr.length > 0 ? arr[0][columnNameToReturn] : searchIndex;
   }
 
-  public static addHeaders( skipErrorHandling = false, skipLoginCheck = false){
-    let headers = new HttpHeaders();
-    if(skipErrorHandling){
-      headers.set( 'X-Skip-Error-Handling', 'Skip Error Handling')
-    }
-    if(skipLoginCheck){
-      headers.append( 'X-Skip-Login-Check', 'Skip Login Check')
-    }
-    return headers
-  }
-
 }
 
