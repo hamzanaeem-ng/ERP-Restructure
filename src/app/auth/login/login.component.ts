@@ -39,9 +39,7 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService,
     private loginAPI: LoginAPI 
   ){
-    if (this.loginService.isLoggedIn() && this.loginService.getUserInfo()) {
-      router.navigate(['department/motor']);
-    }
+   
   }
 
   ngOnInit(): void {

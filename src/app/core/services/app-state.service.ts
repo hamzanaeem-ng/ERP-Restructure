@@ -30,9 +30,6 @@ export class AppStateService{
         this._permissions.next(val);
     }
 
-    private readonly _previousURL = new BehaviorSubject<string>(null);
-    readonly previousURL$ = this._previousURL.asObservable();
-
     private readonly _departChange =  new Subject<string>();
     set departChange(val: any){
        this._departChange.next(val);
@@ -59,10 +56,6 @@ export class AppStateService{
                 })
                 this.DataInitials = {...this.DataInitials };            
             });
-    }
-
-    setPreviousURL(url){
-        this._previousURL.next(url);
     }
 
 }

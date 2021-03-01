@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 import { Page404Component } from './shared/layout/page404/page404.component';
 
 
@@ -7,7 +8,7 @@ import { Page404Component } from './shared/layout/page404/page404.component';
 const routes: Routes = [ 
   // Primary Routes
   { 
-    path: 'department', loadChildren: () => import(`./departments/departments.module`).then(m => m.DepartmentsModule) 
+    path: 'department', canActivate: [AuthGuard], loadChildren: () => import(`./departments/departments.module`).then(m => m.DepartmentsModule) 
   },
   { 
     path: 'auth', loadChildren: () => import(`./auth/auth.module`).then(m => m.AuthModule)

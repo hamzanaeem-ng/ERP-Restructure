@@ -11,7 +11,7 @@ import { LoginAPI } from './login.api';
 })
 export class LoginService{
     private currentEnvironment = location.pathname.includes('Prod') || location.pathname.includes('Test') || location.pathname.includes('Staging') ? location.pathname.split('/')[1] : '';
-    private _loginToken = null;
+    private _loginToken = new BehaviorSubject<string>(null);
     user = new BehaviorSubject<any>(null);
 
     private readonly _departChange =  new Subject<string>();
@@ -22,23 +22,24 @@ export class LoginService{
     constructor(private _appConfig: AppConfig, private loginAPI: LoginAPI) { }
   
     isLoggedIn() {
-        return this._loginToken ? true : false;
+        return this._loginToken.getValue() ? true : false;
     }
 
-    getToken(): string {
-        if (this._loginToken) {
-          return this._loginToken;
-        }
-        return this.getCookie('tkfToken'+ this.currentEnvironment);
+    extractToken() {
+      this._loginToken.next(this.getCookie('tkfToken'+ this.currentEnvironment))
     }
-  
+
+    getToken(): string {   
+      return this._loginToken.getValue();
+    }
+    
     saveToken(token: string) {
-      this._loginToken = token;
+      this._loginToken.next(token);
       this.setCookie('tkfToken' + this.currentEnvironment, token);
     }
 
     destroyToken() {
-      this._loginToken = null;
+      this._loginToken.next(null);
       this.deleteCookie('tkfToken' + this.currentEnvironment);
     }
 

@@ -23,18 +23,17 @@ export class AppComponent implements OnInit{
 
   ngOnInit(){
     // to update the user behaviuor subject in loginService from the local storage
-    this.loginService.getUserInfo();
+    this.loginService.extractToken();
+    // window.onstorage = function(this,e) {
+      
+    //     console.log('');
+    // };
 
-    this._router.events.pipe(
-      filter((event) => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.previousURL = this.currentURL;
-      console.log(this.previousURL);
-      this.appStateService.setPreviousURL(this.previousURL);
-      this.currentURL = event.url; 
-      console.log(this.currentURL);
-    });
-
+    window.addEventListener('storage',() =>{
+      this.loginService.destroyToken();
+    })
+    
+ 
   }
 
 }
