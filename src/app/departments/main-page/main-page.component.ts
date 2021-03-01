@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { url } from 'inspector';
 import { AppStateService } from 'src/app/core/services/app-state.service';
 import { LoginService } from 'src/app/core/services/login.service';
 
@@ -11,8 +11,9 @@ import { LoginService } from 'src/app/core/services/login.service';
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   department: string = 'motor';
-  
-  constructor( 
+  appURL: string = null;
+
+  constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private appStateService: AppStateService,
@@ -21,12 +22,24 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.appStateService.getDropdownList();
+    
+    this.appStateService.previousURL$.subscribe((url: string) => {
+      this.appURL = url;
+      
+    })
+
     const deptName = this.loginService.getUserInfo()?.DepartmentName;
-    this._router.navigate([deptName] , {relativeTo: this._activatedRoute} );
+    
+    if(this.appURL?.includes(deptName)){
+      this._router.navigateByUrl(this.appURL);
+    }
+    else{
+      this._router.navigate([deptName], { relativeTo: this._activatedRoute });
+    }
   }
 
-  ngOnDestroy(): void{
-  
+  ngOnDestroy(): void {
+
   }
 
 }

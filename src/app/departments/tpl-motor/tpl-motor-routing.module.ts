@@ -4,13 +4,12 @@ import { GeneralSetupComponent } from './home/general-setup/general-setup.compon
 
 const routes: Routes = [
   {
-    path: '', children: [
+    path: '',  children: [
       // primary routes
       { path: 'general/master', component: GeneralSetupComponent },
       { 
         path: 'policy', loadChildren: () => import(`./policy/policy.module`).then(m => m.PolicyModule) 
       },
-      // secondary routes
       { path: '', redirectTo: 'general/master', pathMatch: 'full'},
     
     ]
