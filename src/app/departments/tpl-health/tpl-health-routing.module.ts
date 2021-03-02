@@ -12,7 +12,7 @@ const routes: Routes = [
       },
       // secondary routes
       { path: '', redirectTo: 'general/master', pathMatch: 'full' },
-     
+  
     ]
   }
 ];

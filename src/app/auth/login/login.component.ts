@@ -135,6 +135,9 @@ export class LoginComponent implements OnInit {
     delete this.loginResponse['authorizedToken'];
     let logonnResponse = this.loginResponse;
     logonnResponse['FkDepartmentId'] = this.selectedDepartment;
+    logonnResponse['userDepartments'].forEach(dept => {
+      dept.DepartmentName = dept.DepartmentName.toLowerCase();
+    });
     logonnResponse['DepartmentName'] = logonnResponse['userDepartments'].find(x => x.FkDepartmentId === this.selectedDepartment).DepartmentName;
     logonnResponse['FkBranchId'] = this.selectedBranch.FkBranchId;
     logonnResponse['BranchCode'] = this.selectedBranch.BranchCode;

@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { threadId } from 'worker_threads';
 import { AppStateService } from './core/services/app-state.service';
 import { LoginService } from './core/services/login.service';
 
@@ -24,15 +25,11 @@ export class AppComponent implements OnInit{
   ngOnInit(){
     // to update the user behaviuor subject in loginService from the local storage
     this.loginService.extractToken();
-    // window.onstorage = function(this,e) {
-      
-    //     console.log('');
-    // };
 
     window.addEventListener('storage',() =>{
       this.loginService.destroyToken();
-    })
-    
+      this._router.navigate(['auth']);
+    });
  
   }
 
